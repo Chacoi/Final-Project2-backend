@@ -11,8 +11,12 @@ const Discusion = require('../models/Discusion');
 //Agregar comentario
 comentarioRoute.route('/:id/comentario-create').post( async (req, res, next) => {
     const discusion = await Discusion.findById(req.params.id);
+    comentario = new Comentario({
+        idAutor: req.session.user_id,
+        comentario: req.body.comentario
+    });
         if(discusion){
-            Comentario.create(req.body, (error, data) => {
+            Comentario.create(comentario, (error, data) => {
                 if (error) {
                     return next(error);
                 } else {
@@ -40,5 +44,47 @@ comentarioRoute.route('/comentario-delete/:id').delete((req, res, next) => {
         }
     })
 })
+
+//Valorar comentario
+comentarioRoute.route('/comentario-valorar/:id').put((req, res, next) => {
+    console.log("Valorar comentario");
+     Comentario.findByIdAndUpdate(req.params.id, {
+         $set: { valoracion: req.body.valoracion }
+     }, (error, data) => {
+         if(error){
+             console.log("Hay un error compare");
+             return next(error);
+         }else{
+             console.log(data)
+             res.json(data);
+         }
+     });
+});
+
+//Contar valoraciones
+comentarioRoute.route('/comentario-count').get( async (req, res, next) => {
+    idUsuario = req.session.user_id;
+    await Comentario.find({idAutor: idUsuario, valoracion: true}, (error, data) => {
+        if(error){
+            console.log("Discusion no encontrada")
+            return next(error);
+        }else{
+            console.log(data)
+            res.json(data);
+        }
+    });
+})
+
+//Comentarios según usuario activo
+comentarioRoute.route('/comentario-user-list').get( async (req, res) => {
+    console.log("Obtener todas las discusiones");
+    await Comentario.find({idAutor: req.session.user_id},(error, data) => {
+        if(error){
+            return next(error);
+        }else{
+            res.json(data);
+        }
+    });
+});
 
 module.exports = comentarioRoute;

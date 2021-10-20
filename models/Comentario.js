@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const comentarioSchema = new Schema({
-    comentario: String
+    idAutor: String,
+    comentario: String,
+    valoracion: Boolean
 },
 {
     collection: 'comentarios'
