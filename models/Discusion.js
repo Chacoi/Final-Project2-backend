@@ -5,9 +5,11 @@ const Comentario = require('./Comentario');
 
 
 const discusionSchema = new Schema({
+    idAutor: String,
     autor: String,
     titulo: String,
     contenido: String,
+    valoracion: Boolean,
     comentarios: [{ type: Schema.Types.ObjectId, ref: 'Comentario'}],
     intereses: [{type: String}]
 },
