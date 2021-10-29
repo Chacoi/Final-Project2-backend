@@ -10,6 +10,9 @@ const resenaRoute = require('./routes/resena.route');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/Usuario');
 
 mongoose.connect('mongodb://localhost:27017/2ndChance', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
@@ -44,6 +47,24 @@ app.use(session({
     saveUninitialized: true,
     store: MongoStore.create({mongoUrl: 'mongodb://localhost:27017/2ndChance'})
 }));
+//---Passport config---
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+  });
+passport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+      done(err, user);
+    });
+  });
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    next();
+});
+
+//---Rutas---
 app.use('/api/discusion', discusionRoute);
 app.use('/api/usuario', userRoute);
 app.use('/api/comentario', comentarioRoute);

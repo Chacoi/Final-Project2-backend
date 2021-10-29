@@ -24,7 +24,7 @@ discusionRoute.route('/:id/discusion-list').get( async (req, res) => {
 //Obtener discusiones según usuario activo
 discusionRoute.route('/discusion-user-list').get( async (req, res) => {
     console.log("Obtener todas las discusiones");
-    await Discusion.find({idAutor: req.session.user_id},(error, data) => {
+    await Discusion.find({idAutor: req.user._id},(error, data) => {
         if(error){
             return next(error);
         }else{
@@ -52,8 +52,8 @@ discusionRoute.route('/discusion-create').post( async (req, res, next) => {
     console.log(req.body.intereses);
     discusion = new Discusion(
         {   
-            idAutor: req.session.user_id,
-            autor: req.session.username,
+            idAutor: req.user._id,
+            autor: req.user.username,
             titulo: req.body.contenido.titulo,
             contenido: req.body.contenido.contenido,
             intereses: req.body.intereses
@@ -92,7 +92,7 @@ discusionRoute.route('/discusion-update/:id').put((req, res, next) => {
         if(error){
             return next(error)
         }else{
-            res.json(data);
+            res.end();
         }
     });
 });
@@ -129,7 +129,7 @@ discusionRoute.route('/discusion-valorar/:id').put((req, res, next) => {
 
 //Cuantificar valoraciones
 discusionRoute.route('/discusion-count').get( async (req, res, next) => {
-    idUsuario = req.session.user_id;
+    idUsuario = req.user._id;
     await Discusion.find({idAutor: idUsuario, valoracion: true}, (error, data) => {
         if(error){
             console.log("Discusion no encontrada")
