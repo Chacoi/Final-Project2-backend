@@ -12,7 +12,7 @@ const Discusion = require('../models/Discusion');
 comentarioRoute.route('/:id/comentario-create').post( async (req, res, next) => {
     const discusion = await Discusion.findById(req.params.id);
     comentario = new Comentario({
-        idAutor: req.session.user_id,
+        idAutor: req.user._id,
         comentario: req.body.comentario
     });
         if(discusion){
@@ -63,7 +63,7 @@ comentarioRoute.route('/comentario-valorar/:id').put((req, res, next) => {
 
 //Contar valoraciones
 comentarioRoute.route('/comentario-count').get( async (req, res, next) => {
-    idUsuario = req.session.user_id;
+    idUsuario = req.user._id;
     await Comentario.find({idAutor: idUsuario, valoracion: true}, (error, data) => {
         if(error){
             console.log("Discusion no encontrada")
@@ -78,7 +78,7 @@ comentarioRoute.route('/comentario-count').get( async (req, res, next) => {
 //Comentarios según usuario activo
 comentarioRoute.route('/comentario-user-list').get( async (req, res) => {
     console.log("Obtener todas las discusiones");
-    await Comentario.find({idAutor: req.session.user_id},(error, data) => {
+    await Comentario.find({idAutor: req.user._id},(error, data) => {
         if(error){
             return next(error);
         }else{
