@@ -7,11 +7,15 @@ const discusionRoute = require('./routes/discusion.route');
 const userRoute = require('./routes/user.route');
 const comentarioRoute = require('./routes/comentario.route');
 const resenaRoute = require('./routes/resena.route');
+const asignaturaRoute = require ('./routes/asignatura.route');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
+const FacebookStrategy = require('passport-facebook');
+const GoogleStrategy = require('passport-google-oauth');
+
 const User = require('./models/Usuario');
 
 mongoose.connect('mongodb://localhost:27017/2ndChance', {useNewUrlParser: true, useUnifiedTopology: true})
@@ -63,13 +67,45 @@ app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     next();
 });
-
+passport.use(new FacebookStrategy({
+    clientID: '871145953604001',
+    clientSecret: 'f2830cc4cf44b67c4a5d72a2a57b24e4',
+    callbackURL: "http://localhost:3000/api/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ facebookId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));/*
+passport.use(new GoogleStrategy({
+    consumerKey: 'www.example.com',
+    consumerSecret: GOOGLE_CONSUMER_SECRET,
+    callbackURL: "http://127.0.0.1:3000/auth/google/callback"
+  },
+  function(token, tokenSecret, profile, cb) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));*/
 //---Rutas---
 app.use('/api/discusion', discusionRoute);
 app.use('/api/usuario', userRoute);
 app.use('/api/comentario', comentarioRoute);
 app.use('/api/resena', resenaRoute);
+app.use('/api/asignatura', asignaturaRoute);
 
+//---Auth con Facebook---
+app.get('/api/auth/facebook',
+  passport.authenticate('facebook'));
+
+app.get('/api/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.json(res);
+  });
 
 //Create port
 const port = process.env.PORT || 3000;

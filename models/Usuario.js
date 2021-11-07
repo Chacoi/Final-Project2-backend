@@ -8,6 +8,9 @@ const usuarioSchema = new Schema({
         required: true,
         unique: true
     },
+    permisos: {
+        type: String
+    },
     intereses: [{ type: Schema.Types.ObjectId, ref: 'Interes'}]
 });
 

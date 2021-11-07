@@ -11,7 +11,7 @@ const asignaturaSchema = new Schema({
     comentarios: [{ type: Schema.Types.ObjectId, ref: 'Comentario'}]
 },
 {
-    collection: 'resenas'
+    collection: 'asignaturas'
 });
 
 module.exports = mongoose.model('Asignatura', asignaturaSchema);
