@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const comentarioSchema = new Schema({
     idAutor: String,
     comentario: String,
-    valoracion: Boolean
+    valoracionMal: [{type: String}],
+    valoracionBien: [{type: String}]
 },
 {
     collection: 'comentarios'

@@ -6,6 +6,7 @@ const Interes = require('../models/Interes');
 const Discusion = require('../models/Discusion');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const isLoggedIn = require('../middleware');
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
     next();
@@ -26,13 +27,25 @@ app.use((req, res, next) => {
     
     
 // });
+//Ver todos los usuarios
+userRoute.get('/user-list', async (req, res, next) => {
+    console.log("Obtener todos los usuarios");
+    await User.find((error, data) => {
+        if(error){
+            return next(error);
+        }else{
+            res.json(data);
+        }
+    });
+})
 
 //Registrar usuario
 userRoute.post('/register', async (req, res, next) => {
     const { password, username, email } = req.body;
-    const user = new User({ username, email });
+    const permisos = 'estudiante';
+    const user = new User({ username, email, permisos });
     registeredUser = await User.register(user, password);
-    req.logIn(reqgisteredUser, err => {
+    req.logIn(registeredUser, err => {
         if(err) return next(err);
         console.log("Inicio de sesión correcto");
         res.json(user);
@@ -115,4 +128,16 @@ userRoute.route('/intereses').get( async (req, res) => {
     }).populate('intereses');
 });
 
+//Dar rol de moderador a un usuario
+userRoute.route('/dar-privilegio/:id').put(async (req, res) => {
+    User.findByIdAndUpdate(req.params.id, {
+        permisos: req.body.rol
+    }, (error, data) => {
+        if(error){
+            return next(error)
+        }else{
+            res.end();
+        }
+    });
+});
 module.exports = userRoute;

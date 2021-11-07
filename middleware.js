@@ -1,7 +1,7 @@
 module.exports.isLoggedIn = (req, res, next) => {
     if(!req.isAuthenticated()){
         console.log('error', 'Debes registrarte primero!');
-        return res.json();
+        return res.end();
     }
     next();
 }
