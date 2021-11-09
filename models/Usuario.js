@@ -11,6 +11,15 @@ const usuarioSchema = new Schema({
     permisos: {
         type: String
     },
+    image: {
+        type: Schema.Types.Mixed
+    },
+    score: {
+        type: Number
+    },
+    medalla: {
+        type: String
+    },
     intereses: [{ type: Schema.Types.ObjectId, ref: 'Interes'}]
 });
 

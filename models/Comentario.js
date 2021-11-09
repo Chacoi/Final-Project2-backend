@@ -3,9 +3,11 @@ const Schema = mongoose.Schema;
 
 const comentarioSchema = new Schema({
     idAutor: String,
+    autor: String,
     comentario: String,
     valoracionMal: [{type: String}],
-    valoracionBien: [{type: String}]
+    valoracionBien: [{type: String}],
+    rate: Number
 },
 {
     collection: 'comentarios'
