@@ -33,6 +33,7 @@ module.exports.register = async (req, res, next) => {
     const { password, username, email, image } = req.body;
     const permisos = 'estudiante';
     const user = new User({ username, email, permisos, image, score: 0 });
+    console.log(req.body);
     registeredUser = await User.register(user, password);
     req.logIn(registeredUser, err => {
         if(err) return next(err);
@@ -89,7 +90,7 @@ module.exports.addInteres = async (req, res, next) => {
 }
 
 module.exports.delInteres = (req, res, next) => {
-    Interes.findOneAndDelete(req.params.id, (error, data) => {
+    Interes.findOneAndDelete({_id: req.params.id}, (error, data) => {
         if(error){
             return next(error);
         }else{
@@ -122,3 +123,4 @@ module.exports.permissions = async (req, res) => {
         }
     });
 }
+

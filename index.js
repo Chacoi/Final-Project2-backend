@@ -1,3 +1,6 @@
+if(process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+};
 const express           = require('express');
 const app               = express();
 const path              = require('path');
@@ -15,6 +18,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth');
+const multer = require('multer');
 
 const User = require('./models/Usuario');
 
@@ -77,7 +81,9 @@ passport.use(new FacebookStrategy({
       return cb(err, user);
     });
   }
-));/*
+));
+
+/*
 passport.use(new GoogleStrategy({
     consumerKey: 'www.example.com',
     consumerSecret: GOOGLE_CONSUMER_SECRET,
@@ -106,6 +112,7 @@ app.get('/api/auth/facebook/callback',
     // Successful authentication, redirect home.
     res.json(res);
   });
+ 
 
 //Create port
 const port = process.env.PORT || 3000;

@@ -44,7 +44,8 @@ module.exports.create = async (req, res, next) => {
             autor: req.user.username,
             titulo: req.body.contenido.titulo,
             contenido: req.body.contenido.contenido,
-            intereses: req.body.intereses
+            intereses: req.body.intereses,
+            fecha: new Date()
         }
     );
         Discusion.create(discusion, (error, data) => {
@@ -53,6 +54,7 @@ module.exports.create = async (req, res, next) => {
                 return next(error);
             } else {
                 console.log('Informacion cargada correctamente');
+                console.log(discusion.fecha.getDay())
                 console.log(data);
                 res.json(data);
             }
@@ -101,29 +103,36 @@ module.exports.rate = (req, res, next) => {
     console.log("Valorar discusion");
     let idDiscusion = req.params.id;
     let valoracion = req.body.valoracion;
+    let flag = false;
     Discusion.findById(idDiscusion, (error, data) => {
         if(error) {
             return next(error);
         }else{
             if(!valoracion){
             data.valoracionMal.forEach(element => {
-                if(element==idDiscusion){
+                if(element==req.user._id){
                     res.end();
                 }
             });
             data.valoracionMal.push(req.user._id);
             console.log(data);
+            data.save();
             res.json(data);
             }
             if(valoracion){
                 data.valoracionBien.forEach(element => {
-                    if(element==idDiscusion){
-                        res.end();
+                    if(element==req.user._id){
+                        flag= true;
                     }
                 });
-                data.valoracionBien.push(req.user._id);
-                console.log(data);
-                res.json(data);
+                if(!flag){
+                    data.valoracionBien.push(req.user._id);
+                    data.save();
+                    console.log(data);
+                    res.json(data);
+                }else{
+                    res.end();
+                }
             }
         }
     })
@@ -131,13 +140,18 @@ module.exports.rate = (req, res, next) => {
 
 module.exports.rateCount = async (req, res, next) => {
     idUsuario = req.user._id;
-    await Discusion.find({idAutor: idUsuario, valoracion: { $in: [true]}}, (error, data) => {
+    let cont = 0;
+    await Discusion.find({idAutor: idUsuario}, (error, data) => {
         if(error){
             console.log("Discusion no encontrada")
             return next(error);
         }else{
-            console.log(data.valoracion)
-            res.json(data.valoracion);
+            data.forEach( element => {
+                cont = element.valoracionBien.length + cont;
+                console.log(element);
+            })
+            console.log(cont);
+            res.json(cont);
         }
     });
 }

@@ -38,11 +38,16 @@ module.exports.add = async (req, res, next) => {
     }
     if(ubicacion=='resena'){
         const asignatura = await Asignatura.findById(req.params.id);
+        let puntuacion = req.body.rating;
+        if(!req.body.rating){
+            puntuacion = 0;
+            console.log("el formulario está malo " + req.body.rating)
+        }
         comentario = new Comentario({
             idAutor: req.user._id,
             autor: autor,
             comentario: req.body.comentario,
-            rate: req.body.rating
+            rate: puntuacion
         });
             if(asignatura){
                 Comentario.create(comentario, (error, data) => {
