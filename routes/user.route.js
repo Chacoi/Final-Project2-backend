@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const userRoute = express.Router();
 const User = require('../models/Usuario');
-const Interes = require('../models/Interes');
+
 const Discusion = require('../models/Discusion');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
@@ -52,6 +52,8 @@ userRoute.post('/file', upload.single('file'), (req, res, next) => {
     res.send(file);
   });
   
+//Actualizar usuario
+userRoute.put('/usuario-update', usuarios.update);
 
 //Cerrar sesion
 userRoute.get('/logout', usuarios.logout);
@@ -62,14 +64,8 @@ userRoute.post('/login', passport.authenticate('local'), usuarios.login);
 //Usuario activo
 userRoute.route('/usuario-activo').get(usuarios.active)
 
-//Agregar interés
+//Agregar interés a usuario
 userRoute.route('/interes-add').post( usuarios.addInteres);
-
-//Eliminar interés
-userRoute.route('/interes-delete/:id').delete(usuarios.delInteres);
-
-//Obtener intereses
-userRoute.route('/intereses').get(usuarios.getInteres);
 
 //Dar rol de moderador a un usuario
 userRoute.route('/dar-privilegio/:id').put(usuarios.permissions);

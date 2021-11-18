@@ -6,11 +6,15 @@ const app               = express();
 const path              = require('path');
 const mongoose          = require('mongoose');
 const methodOverride    = require('method-override');
+
+//--- Rutas---
 const discusionRoute = require('./routes/discusion.route');
 const userRoute = require('./routes/user.route');
 const comentarioRoute = require('./routes/comentario.route');
 const resenaRoute = require('./routes/resena.route');
 const asignaturaRoute = require ('./routes/asignatura.route');
+const interesRoute = require('./routes/interes.route');
+
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -95,12 +99,13 @@ passport.use(new GoogleStrategy({
     });
   }
 ));*/
-//---Rutas---
+//---Ejecución de rutas---
 app.use('/api/discusion', discusionRoute);
 app.use('/api/usuario', userRoute);
 app.use('/api/comentario', comentarioRoute);
 app.use('/api/resena', resenaRoute);
 app.use('/api/asignatura', asignaturaRoute);
+app.use('/api/interes', interesRoute)
 
 //---Auth con Facebook---
 app.get('/api/auth/facebook',

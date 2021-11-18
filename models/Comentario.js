@@ -7,7 +7,8 @@ const comentarioSchema = new Schema({
     comentario: String,
     valoracionMal: [{type: String}],
     valoracionBien: [{type: String}],
-    rate: Number
+    rate: Number,
+    fecha: Date
 },
 {
     collection: 'comentarios'

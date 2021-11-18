@@ -59,7 +59,7 @@ module.exports.active = (req, res, next) => {
             if(error) {
                 return next(error);
             }else{
-                console.log(data);
+                
                 res.json(data);
             }
         }).populate('intereses');
@@ -73,7 +73,7 @@ module.exports.addInteres = async (req, res, next) => {
     const usuario = await User.findById(req.user._id);
     console.log(usuario);
         if(usuario){
-            Interes.create(req.body, (error, data) => {
+            Interes.findOne({_id: req.body._id}, (error, data) => {
                 if (error) {
                     return next(error);
                 } else {
@@ -89,28 +89,20 @@ module.exports.addInteres = async (req, res, next) => {
         }
 }
 
-module.exports.delInteres = (req, res, next) => {
-    Interes.findOneAndDelete({_id: req.params.id}, (error, data) => {
+module.exports.update = (req, res, next) => {
+    console.log("actualizar discusion")
+    User.findByIdAndUpdate(req.user._id, {
+        username: req.body.username,
+        email: req.body.email
+    }, (error, data) => {
         if(error){
-            return next(error);
+            return next(error)
         }else{
-            res.status(200).json({
-                msg: data
-            })
+            res.end();
         }
-    })
+    });
 }
 
-module.exports.getInteres =  async (req, res) => {
-    const id = req.user._id
-    Discusion.findById(id, (error, data) => {
-        if(error) {
-            return next(error);
-        }else{
-            res.json(data);
-        }
-    }).populate('intereses');
-}
 
 module.exports.permissions = async (req, res) => {
     User.findByIdAndUpdate(req.params.id, {

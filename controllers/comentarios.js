@@ -19,6 +19,7 @@ module.exports.add = async (req, res, next) => {
             idAutor: req.user._id,
             autor: autor,
             comentario: req.body.comentario,
+            fecha: new Date()
         });
             if(discusion){
                 Comentario.create(comentario, (error, data) => {
@@ -47,7 +48,8 @@ module.exports.add = async (req, res, next) => {
             idAutor: req.user._id,
             autor: autor,
             comentario: req.body.comentario,
-            rate: puntuacion
+            rate: puntuacion,
+            fecha: new Date()
         });
             if(asignatura){
                 Comentario.create(comentario, (error, data) => {
@@ -82,42 +84,54 @@ module.exports.rate = (req, res, next) => {
     console.log("Valorar discusion");
     let idComentario = req.params.id;
     let valoracion = req.body.valoracion;
+    let flag = false;
     Comentario.findById(idComentario, (error, data) => {
         if(error) {
             return next(error);
         }else{
             if(!valoracion){
             data.valoracionMal.forEach(element => {
-                if(element==idComentario){
+                if(element==req.user._id){
                     res.end();
                 }
             });
             data.valoracionMal.push(req.user._id);
             console.log(data);
+            data.save();
             res.json(data);
             }
             if(valoracion){
                 data.valoracionBien.forEach(element => {
-                    if(element==idComentario){
-                        res.end();
+                    if(element==req.user._id){
+                        flag= true;
                     }
                 });
-                data.valoracionBien.push(req.user._id);
-                console.log(data);
-                res.json(data);
+                if(!flag){
+                    data.valoracionBien.push(req.user._id);
+                    data.save();
+                    console.log(data);
+                    res.json(data);
+                }else{
+                    res.end();
+                }
             }
         }
     })
 }
 module.exports.rateCount = async (req, res, next) => {
     idUsuario = req.user._id;
-    await Comentario.find({idAutor: idUsuario, valoracion: { $in: [true]}}, (error, data) => {
+    let cont = 0;
+    await Comentario.find({ idAutor: idUsuario, valoracionBien: {$exists: true, $not: {$size: 0}} }, (error, data) => {
         if(error){
             console.log("Discusion no encontrada")
             return next(error);
         }else{
-            console.log(data)
-            res.json(data.valoracionBien);
+            data.forEach( element => {
+                cont = element.valoracionBien.length + cont;
+                console.log(element);
+            })
+            console.log(cont);
+            res.json(cont);
         }
     });
 }
