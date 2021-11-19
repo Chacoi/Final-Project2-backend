@@ -31,7 +31,7 @@ module.exports.delete = (req, res, next) => {
 
 module.exports.register = async (req, res, next) => {
     const { password, username, email, image } = req.body;
-    const permisos = 'admin';
+    const permisos = 'estudiante';
     const user = new User({ username, email, permisos, image, score: 0, medalla: "../../../../assets/medalla0.png"});
     console.log(req.body);
     registeredUser = await User.register(user, password);
