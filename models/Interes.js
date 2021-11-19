@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const interesSchema = new mongoose.Schema({
     nombre: String,
-    descripcion: String
+    descripcion: String,
+    imagen: String
 },
 {
     collection: 'intereses'

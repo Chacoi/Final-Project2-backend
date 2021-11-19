@@ -1,13 +1,20 @@
+if(process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+};
 const express           = require('express');
 const app               = express();
 const path              = require('path');
 const mongoose          = require('mongoose');
 const methodOverride    = require('method-override');
+
+//--- Rutas---
 const discusionRoute = require('./routes/discusion.route');
 const userRoute = require('./routes/user.route');
 const comentarioRoute = require('./routes/comentario.route');
 const resenaRoute = require('./routes/resena.route');
 const asignaturaRoute = require ('./routes/asignatura.route');
+const interesRoute = require('./routes/interes.route');
+
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -15,10 +22,11 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth');
-
+const multer = require('multer');
+const dbURL = process.env.DB_URL;
 const User = require('./models/Usuario');
 
-mongoose.connect('mongodb://localhost:27017/2ndChance', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(dbURL, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
     console.log("Conexion a la DB realizada correctamente");
 })
@@ -77,7 +85,9 @@ passport.use(new FacebookStrategy({
       return cb(err, user);
     });
   }
-));/*
+));
+
+/*
 passport.use(new GoogleStrategy({
     consumerKey: 'www.example.com',
     consumerSecret: GOOGLE_CONSUMER_SECRET,
@@ -89,12 +99,13 @@ passport.use(new GoogleStrategy({
     });
   }
 ));*/
-//---Rutas---
+//---Ejecución de rutas---
 app.use('/api/discusion', discusionRoute);
 app.use('/api/usuario', userRoute);
 app.use('/api/comentario', comentarioRoute);
 app.use('/api/resena', resenaRoute);
 app.use('/api/asignatura', asignaturaRoute);
+app.use('/api/interes', interesRoute)
 
 //---Auth con Facebook---
 app.get('/api/auth/facebook',
@@ -106,6 +117,7 @@ app.get('/api/auth/facebook/callback',
     // Successful authentication, redirect home.
     res.json(res);
   });
+ 
 
 //Create port
 const port = process.env.PORT || 3000;
