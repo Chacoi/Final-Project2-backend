@@ -23,10 +23,10 @@ const LocalStrategy = require('passport-local');
 const FacebookStrategy = require('passport-facebook');
 const GoogleStrategy = require('passport-google-oauth');
 const multer = require('multer');
-
+const dbURL = process.env.DB_URL;
 const User = require('./models/Usuario');
 
-mongoose.connect('mongodb://localhost:27017/2ndChance', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(dbURL, {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => {
     console.log("Conexion a la DB realizada correctamente");
 })

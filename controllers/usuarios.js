@@ -31,8 +31,8 @@ module.exports.delete = (req, res, next) => {
 
 module.exports.register = async (req, res, next) => {
     const { password, username, email, image } = req.body;
-    const permisos = 'estudiante';
-    const user = new User({ username, email, permisos, image, score: 0 });
+    const permisos = 'admin';
+    const user = new User({ username, email, permisos, image, score: 0, medalla: "../../../../assets/medalla0.png"});
     console.log(req.body);
     registeredUser = await User.register(user, password);
     req.logIn(registeredUser, err => {
@@ -90,19 +90,31 @@ module.exports.addInteres = async (req, res, next) => {
 }
 
 module.exports.update = (req, res, next) => {
-    console.log("actualizar discusion")
-    User.findByIdAndUpdate(req.user._id, {
-        username: req.body.username,
-        email: req.body.email
-    }, (error, data) => {
-        if(error){
-            return next(error)
-        }else{
-            res.end();
-        }
-    });
+    console.log("actualizar discusion");
+    if(!req.body.medalla){
+        User.findByIdAndUpdate(req.user._id, {
+            username: req.body.username,
+            email: req.body.email
+        }, (error, data) => {
+            if(error){
+                return next(error)
+            }else{
+                res.end();
+            }
+        });
+    }else{
+        User.findByIdAndUpdate(req.user._id, {
+            medalla: req.body.medalla
+        }, (error, data) => {
+            if(error){
+                return next(error)
+            }else{
+                res.end();
+            }
+        });
+    }
+    
 }
-
 
 module.exports.permissions = async (req, res) => {
     User.findByIdAndUpdate(req.params.id, {
@@ -114,5 +126,16 @@ module.exports.permissions = async (req, res) => {
             res.end();
         }
     });
+}
+
+module.exports.medalla = async (req, res) => {
+    User.findById(req.params.id, (error, data) => {
+        if(error){
+            return next(error)
+        }else{
+            console.log(data);
+            res.json(data.medalla);
+        }
+    })
 }
 

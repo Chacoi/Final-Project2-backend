@@ -70,4 +70,7 @@ userRoute.route('/interes-add').post( usuarios.addInteres);
 //Dar rol de moderador a un usuario
 userRoute.route('/dar-privilegio/:id').put(usuarios.permissions);
 
+//Obtener medalla de usuario
+userRoute.route('/medalla/:id').get(usuarios.medalla);
+
 module.exports = userRoute;
