@@ -30,11 +30,11 @@ module.exports.delete = (req, res, next) => {
 }
 
 module.exports.register = async (req, res, next) => {
-    const { password, username, email, image } = req.body;
+    const { password, username, email } = req.body;
     const permisos = 'estudiante';
-    const user = new User({ username, email, permisos, image, score: 0, medalla: "../../../../assets/medalla0.png"});
+    const user      = new User({ username, email, permisos: permisos, image: "../../../../assets/default-profile.jpg", score: 0, medalla: "../../../../assets/medalla0.png"});
     console.log(req.body);
-    registeredUser = await User.register(user, password);
+    registeredUser  = await User.register(user, password);
     req.logIn(registeredUser, err => {
         if(err) return next(err);
         console.log("Inicio de sesión correcto");
@@ -56,6 +56,22 @@ module.exports.login = async (req, res, next) => {
 module.exports.active = (req, res, next) => {
     if(req.user){
         User.findOne({username: req.user.username}, (error, data) => {
+            if(error) {
+                return next(error);
+            }else{
+                
+                res.json(data);
+            }
+        }).populate('intereses');
+    }else{
+        res.end()
+    }
+   
+}
+
+module.exports.externo = (req, res, next) => {
+    if(req.user){
+        User.findById(req.params.id, (error, data) => {
             if(error) {
                 return next(error);
             }else{
@@ -130,6 +146,7 @@ module.exports.permissions = async (req, res) => {
 
 module.exports.medalla = async (req, res) => {
     User.findById(req.params.id, (error, data) => {
+        console.log(req.params.id)
         if(error){
             return next(error)
         }else{

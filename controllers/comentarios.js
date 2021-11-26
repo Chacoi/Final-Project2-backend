@@ -135,9 +135,38 @@ module.exports.rateCount = async (req, res, next) => {
         }
     });
 }
-module.exports.list =  async (req, res) => {
+
+module.exports.rateCountExterno = async (req, res, next) => {
+    idUsuario = req.params.id;
+    let cont = 0;
+    await Comentario.find({ idAutor: idUsuario, valoracionBien: {$exists: true, $not: {$size: 0}} }, (error, data) => {
+        if(error){
+            console.log("Discusion no encontrada")
+            return next(error);
+        }else{
+            data.forEach( element => {
+                cont = element.valoracionBien.length + cont;
+                console.log(element);
+            })
+            console.log(cont);
+            res.json(cont);
+        }
+    });
+}
+module.exports.list =  async (req, res) => { // Es para contar comentarios
     console.log("Obtener todas las discusiones");
     await Comentario.find({idAutor: req.user._id},(error, data) => {
+        if(error){
+            return next(error);
+        }else{
+            res.json(data);
+        }
+    });
+}
+
+module.exports.listExterno =  async (req, res) => { // Es para contar comentarios externos
+    console.log("Obtener todas las discusiones");
+    await Comentario.find({idAutor: req.params.id},(error, data) => {
         if(error){
             return next(error);
         }else{

@@ -10,6 +10,7 @@ const discusionSchema = new Schema({
     titulo: String,
     contenido: String,
     fecha: Date,
+    image: String,
     valoracionMal: [{type: String}],
     valoracionBien: [{type: String}],
     comentarios: [{ type: Schema.Types.ObjectId, ref: 'Comentario'}],

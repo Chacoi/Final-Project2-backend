@@ -23,6 +23,17 @@ module.exports.listByUser = async (req, res) => {
     });
 }
 
+module.exports.listByUserExterno = async (req, res) => {
+    console.log("Obtener todas las discusiones");
+    await Discusion.find({idAutor: req.params.id},(error, data) => {
+        if(error){
+            return next(error);
+        }else{
+            res.json(data);
+        }
+    });
+}
+
 module.exports.listByTag =  async (req, res, next) => {
     console.log("obtener discusiones según interés");
     await Discusion.find({intereses: { $in: [req.params.tag]}}, (error, data) => {
@@ -38,6 +49,16 @@ module.exports.listByTag =  async (req, res, next) => {
 module.exports.create = async (req, res, next) => {
     console.log(req.body.contenido);
     console.log(req.body.intereses);
+    console.log(req.body.tipo);
+    const tipoDiscusion = req.body.tipo;
+    let imagenDiscusion = "../../../../assets/default.jpg";;
+    if( tipoDiscusion == 'Positiva'){
+        imagenDiscusion = "../../../../assets/feliz.png";
+    } else if(tipoDiscusion == 'Neutral'){
+        imagenDiscusion = "../../../../assets/neutral.png";
+    }else if(tipoDiscusion == 'Negativa'){
+        imagenDiscusion = "../../../../assets/triste.png";
+    }
     discusion = new Discusion(
         {   
             idAutor: req.user._id,
@@ -45,6 +66,7 @@ module.exports.create = async (req, res, next) => {
             titulo: req.body.contenido.titulo,
             contenido: req.body.contenido.contenido,
             intereses: req.body.intereses,
+            image: imagenDiscusion,
             fecha: new Date()
         }
     );
@@ -87,7 +109,7 @@ module.exports.update = (req, res, next) => {
 
 module.exports.delete = (req, res, next) => {
     console.log("borrar discusion")
-    Discusion.findOneAndDelete(req.params.id, (error, data) => {
+    Discusion.findByIdAndDelete(req.params.id, (error, data) => {
         if(error){
             return next(error);
         }else{
@@ -140,6 +162,24 @@ module.exports.rate = (req, res, next) => {
 
 module.exports.rateCount = async (req, res, next) => {
     idUsuario = req.user._id;
+    let cont = 0;
+    await Discusion.find({idAutor: idUsuario}, (error, data) => {
+        if(error){
+            console.log("Discusion no encontrada")
+            return next(error);
+        }else{
+            data.forEach( element => {
+                cont = element.valoracionBien.length + cont;
+                console.log(element);
+            })
+            console.log(cont);
+            res.json(cont);
+        }
+    });
+}
+
+module.exports.rateCountExterno = async (req, res, next) => {
+    idUsuario = req.params.id;
     let cont = 0;
     await Discusion.find({idAutor: idUsuario}, (error, data) => {
         if(error){

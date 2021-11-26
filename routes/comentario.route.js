@@ -21,7 +21,11 @@ comentarioRoute.route('/comentario-valorar/:id').put(comentarios.rate);
 //Contar valoraciones
 comentarioRoute.route('/comentario-count').get(comentarios.rateCount);
 
-//Comentarios según usuario activo
-comentarioRoute.route('/comentario-user-list').get(comentarios.list);
+comentarioRoute.route('/comentario-count/:id').get(comentarios.rateCountExterno);
+
+//Comentarios según Dicusión
+comentarioRoute.route('/comentario-read/:id').get(comentarios.list);
+
+comentarioRoute.route('/comentario-read/:id').get(comentarios.listExterno);
 
 module.exports = comentarioRoute;

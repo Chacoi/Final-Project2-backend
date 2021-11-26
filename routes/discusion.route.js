@@ -14,6 +14,8 @@ discusionRoute.route('/discusion-list').get( discusiones.list);
 //Obtener discusiones según usuario activo
 discusionRoute.route('/discusion-user-list').get(discusiones.listByUser);
 
+discusionRoute.route('/discusion-user-list/:id').get(discusiones.listByUserExterno);
+
 //Obtener discusiones según interés
 discusionRoute.route('/discusion-list/:tag').get(discusiones.listByTag);
 
@@ -33,6 +35,8 @@ discusionRoute.route('/discusion-delete/:id').delete(discusiones.delete);
 discusionRoute.route('/discusion-valorar/:id').put(discusiones.rate);
 
 //Cuantificar valoraciones
-discusionRoute.route('/discusion-count').get(discusiones.rateCount)
+discusionRoute.route('/discusion-count').get(discusiones.rateCount);
+
+discusionRoute.route('/discusion-count/:id').get(discusiones.rateCountExterno);
 
 module.exports = discusionRoute;
